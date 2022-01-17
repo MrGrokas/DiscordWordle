@@ -1,0 +1,19 @@
+version: '3'
+services:
+  database:
+    image: "postgres"
+    ports:
+    - 5432:5432
+    env_file:
+      - local.env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    command: [ "postgres", "-c", "log_statement=all", "-c", "shared_preload_libraries=pg_stat_statements", "-c", "pg_stat_statements.track=all" ]
+  sqlc:
+    image: "kjconroy/sqlc"
+    volumes:
+    - ./internal/wordle/:/src
+    working_dir: /src
+    command: generate
+volumes:
+  database-data:
